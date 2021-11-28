@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制水滴</title>
+    <style>
+        #canvas {
+            background-color: beige;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d') // 在2d上下文中绘制
+
+    ctx.translate(300, 300) // 默认情况下，canvas原点为左上的点，，使用translate进行变换
+
+
+    // 开始绘制
+    ctx.beginPath()
+    ctx.moveTo(0, 0) // 二次贝塞尔曲线，也必须先使用moveTo，才能达到理想效果。虽然其他不设置则不影响，但最好开始绘制时，就开始设置moveTo
+    ctx.quadraticCurveTo(50, -50, 50, -100)
+    ctx.arc(0, -100, 50, 0, Math.PI, true)
+    ctx.quadraticCurveTo(-50, -50, 0, 0)
+    ctx.stroke()
+</script>
+</body>
+</html>

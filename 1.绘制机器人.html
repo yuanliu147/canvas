@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>绘制图形：机器人头部</title>
+    <style>
+        #canvas {
+            background-color: beige;
+        }
+    </style>
+
+</head>
+<body>
+    <canvas id="canvas"></canvas>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d') // 在2d上下文中绘制
+
+    // 开始绘制
+    ctx.beginPath()
+    ctx.lineWidth = 40
+    ctx.fillStyle = 'red'
+    // 绘制矩形面部
+    ctx.strokeRect(50, 250, 400, 200) // 注意了第三，四个参数为width以及height
+    ctx.fillRect(70, 270, 360, 160)
+    ctx.clearRect(50, 300, 400, 70)
+
+    // 绘制眼睛
+    ctx.beginPath() // 第一步
+    ctx.arc(150, 335, 25, 0, Math.PI * 2) // 第二步
+    ctx.arc(350, 335, 25, 0, Math.PI, true)
+    ctx.fill() // 第三步
+
+    // 绘制嘴巴
+/*    ctx.beginPath()
+    ctx.rect(150, 370, 200, 50) // 为什么不能使用rect？？？
+    ctx.fillStyle = 'block'
+    ctx.fill()*/
+    ctx.beginPath()
+    ctx.moveTo(150, 400)
+    ctx.lineTo(350, 400)
+    ctx.stroke() // 为什么不能使用fill() ???
+
+    // 绘制天线
+    ctx.beginPath()
+    ctx.moveTo(50, 50) // 注意了，绘制三此贝塞尔曲线，想要变成 ’S‘ 型的话，还得设置moveTo
+    ctx.bezierCurveTo(150, 50, 150, 250, 250, 250)
+    ctx.bezierCurveTo(350, 250, 350, 50, 450, 50)
+    ctx.stroke()
+</script>
+</body>
+</html>
