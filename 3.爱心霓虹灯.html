@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        #canvas {
+            background-color: beige;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d') // 在2d上下文中绘制
+
+    ctx.translate(300, 300) // 默认情况下，canvas原点为左上的点，，使用translate进行变换
+    ctx.lineWidth = 20
+    // ctx.lineCap = 'round'
+    const colors = ['red', 'yellow']
+    function draw() {
+
+        ctx.save() // 保存当前上下文状态。防止当前所画的爱心霓虹灯影响其他绘图
+
+        ctx.setLineDash([30])
+        // 开始绘制
+        ctx.beginPath()
+        // 虚线1
+        ctx.moveTo(0, 0) // 二次贝塞尔曲线，也必须先使用moveTo，才能达到理想效果。虽然其他不设置则不影响，但最好开始绘制时，就开始设置moveTo
+        ctx.strokeStyle = colors[0]
+        ctx.bezierCurveTo(200, -50, 180, -300, 0, -200)
+        ctx.bezierCurveTo(-180, -300, -200, -50, 0, 0)
+        ctx.shadowColor = 'orange'
+        for(let i = 5; i <= 30; i+=5) {
+            ctx.shadowBlur = i
+        }
+        ctx.stroke() // 为什么得先stroke()
+        // 虚线2
+        ctx.lineDashOffset = 30
+        ctx.strokeStyle = colors[1]
+
+        //
+        ctx.shadowColor = 'orange'
+        for(let i = 5; i <= 30; i+=5) {
+            ctx.shadowBlur = i
+        }
+
+        // 若是只是上述这两个操作，则会使阴影越来越大，却来越实质
+
+        ctx.stroke()
+
+        ctx.restore()
+    }
+    draw()
+    setInterval(() => {
+        colors.reverse()
+        // 由于阴影的原因，需要每次绘制之前，先清理画布
+        ctx.clearRect(-300, -300, canvas.width, canvas.height)
+        draw()
+    }, 300)
+</script>
+</body>
+</html>

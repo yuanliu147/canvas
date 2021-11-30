@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时钟</title>
+    <style>
+        #canvas {
+            background-color: #e8e7e7;
+        }
+    </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<script>
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const ctx = canvas.getContext('2d') // 在2d上下文中绘制
+
+    // 绘制时间
+    const [timeX, timeY]=[50,200];
+    function drawTime() {
+        ctx.save()
+
+        const text = formattingTime()
+        ctx.font = 'italic bolder 100px arial' // 设置font貌似必须要设置什么字体
+        // 要设置描边字体，貌似得设置加粗
+
+        // 绘制文本
+        ctx.fillStyle = '#a76921'
+        // ctx.lineWidth = 30 // 填充内容/text貌似不能使用lineWidth
+        ctx.fillText(text, timeX, timeY)
+
+        //描边
+        ctx.lineWidth = 4 // 描边的宽度可以细一点
+        ctx.strokeStyle = '#f0d5ac'
+        ctx.strokeText(text, timeX, timeY)
+
+        // 虚线
+        ctx.setLineDash([5, 3])
+        ctx.lineWidth=1;
+        ctx.strokeStyle='#333';
+        ctx.strokeText(text, timeX, timeY);
+
+        ctx.restore()
+    }
+    function formattingTime() {
+        const date = new Date()
+        const hour = `0${date.getHours()}`.slice(-2)
+        const minute = `0${date.getMinutes()}`.slice(-2)
+        const seconds = `0${date.getSeconds()}`.slice(-2)
+        return `${hour}:${minute}:${seconds}`
+    }
+    // 绘制时钟
+    const [clockX, clockY] = [230, 350] // 时钟位置
+    function drawClock() {
+        ctx.save()
+
+        // 绘制圆盘
+        ctx.beginPath()
+        ctx.fillStyle = 'black'
+        ctx.arc(clockX, clockY, 66, 0, Math.PI * 2)
+        ctx.fill()
+
+        // 绘制圆盘边框
+        ctx.beginPath()
+        ctx.lineWidth = 8
+        ctx.strokeStyle = '#f15252'
+        ctx.arc(clockX, clockY, 70, 0, Math.PI * 2)
+        ctx.stroke()
+
+        // 绘制圆盘边框描边
+        ctx.beginPath()
+        ctx.lineWidth = 3
+        ctx.strokeStyle = '#ff0000'
+        ctx.arc(clockX, clockY, 73, 0, Math.PI * 2)
+        ctx.stroke()
+
+        // 绘制 3-6-9-12 时间红线
+
+        ctx.translate(clockX, clockY)
+
+/*        // 注意了，因为旋转变换默认的基点是左上角，，
+        // 当想要使图形旋转时, 需要将canvas的原点放到图形的中心点 */
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth = 5
+        ctx.strokeStyle = 'red'
+        // const circleDeg = Math.PI * 2
+        // ctx.rotate(circleDeg * degree) 注意：变换是相对的，以上一次变换为基准
+        for (let i = 0; i < 4; i++) {
+            ctx.moveTo(58, 0)
+            ctx.lineTo(66, 0)
+            ctx.rotate(Math.PI / 2)
+        }
+
+        ctx.stroke() // 可以放里面，也可以放外面
+        ctx.restore()
+        // 怎么说，，对于将canvas的变换操作，貌似会影响到下一次绘图
+
+        // 绘制 5 分钟时间标
+        ctx.save()
+        ctx.beginPath()
+        ctx.strokeStyle = '#9f8d7d'
+        ctx.lineWidth = 5
+        for (let i = 0; i < 12; i++) {
+            if(i % 3 !== 0) {
+                ctx.moveTo(62, 0)
+                ctx.lineTo(66, 0)
+            }
+            ctx.rotate(Math.PI / 6)
+        }
+        ctx.stroke()
+        ctx.restore()
+
+        // 绘制 1 分钟间隔
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth = 3
+        ctx.strokeStyle = '#9f8d7d'
+        for (let i = 0; i < 60; i++) {
+            if(i % 5 !== 0) {
+                ctx.moveTo(64, 0)
+                ctx.lineTo(66, 0)
+            }
+            ctx.rotate(Math.PI / 30)
+        }
+        ctx.stroke()
+        ctx.restore()
+
+
+        // 绘制时针
+        ctx.save()
+        ctx.beginPath()
+        ctx.rotate(0)
+        ctx.lineWidth = 4
+        ctx.lineCap = 'round'
+        ctx.moveTo(-10, 0)
+        ctx.lineTo(38, 0)
+        ctx.rotate(getHoursDegree())
+        ctx.stroke()
+        ctx.restore()
+
+        // 绘制分钟
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth = 3
+        ctx.lineCap = 'round'
+        ctx.moveTo(-10, 0)
+        ctx.lineTo(45, 0)
+        ctx.rotate(getMinutesDegree())
+        ctx.stroke()
+        ctx.restore()
+
+        // 绘制秒针
+        ctx.save()
+        ctx.beginPath()
+        ctx.lineWidth = 2
+        ctx.lineCap = 'round'
+        ctx.strokeStyle = '#de1111'
+        ctx.moveTo(-10, 0)
+        ctx.lineTo(48, 0)
+        ctx.rotate(getSecondsDegree())
+        ctx.stroke()
+        ctx.restore()
+
+        // 结束
+        ctx.restore()
+    }
+    function getHoursDegree() {
+        const date = new Date()
+        const hour = date.getHours()
+
+        return (hour % 12 / 12) / (Math.PI * 2) // + Math.PI / 2
+    }
+
+    function getMinutesDegree() {
+        const date = new Date()
+        const minites = date.getMinutes()
+
+        return (minites / 60) / (Math.PI * 2)
+    }
+
+    function getSecondsDegree() {
+        const date = new Date()
+        const seconds = date.getSeconds()
+
+        return (seconds / 60) / (Math.PI * 2)
+    }
+
+    // 运行
+    drawTime()
+    drawClock()
+</script>
+</body>
+</html>
