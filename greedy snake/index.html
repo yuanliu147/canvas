@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Greedy snake</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        #canvas {
+            background-color: antiquewhite;
+        }
+    </style>
+</head>
+<body>
+<canvas id='canvas'></canvas>
+<script type="module">
+    import Snake from './roles/Snake.js'
+    import Food from "./roles/food.js";
+
+    const canvas = document.getElementById('canvas')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+
+    const rect = 10
+    const rows = Math.ceil(canvas.height / rect)
+    const columns = Math.ceil(canvas.width / rect)
+    canvas.width = columns * 10
+    canvas.height = rows * 10
+
+    const ctx = canvas.getContext('2d')
+    /**
+     * 定义：一个小方块为10*10
+     * 一个小方块的坐标 x, y指其左上角的位置
+    * */
+    const snake = new Snake(rect)
+
+    function render() {
+        ctx.save()
+        const data = snake.data
+        data.forEach(item => {
+            ctx.fillStyle = item.color
+            ctx.fillRect(item.x, item.y, snake.rect, snake.rect)
+        })
+        const food = createFood()
+        ctx.fillStyle = food.color
+        ctx.fillRect(food.x, food.y, rect, rect)
+        ctx.restore()
+    }
+    function createFood() {
+        const food = new Food(rows, columns, rect)
+        const isExist = snake.data.some(item => item.x === food.x && item.y === food.y)
+        if (isExist) {
+            return createFood()
+        } else {
+            return food
+        }
+    }
+    render()
+
+    setInterval(() => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+        snake.move()
+        render()
+    }, 300)
+</script>
+</body>
+</html>
