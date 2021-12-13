@@ -20,8 +20,8 @@
     import Food from "./roles/food.js";
 
     const canvas = document.getElementById('canvas')
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    canvas.width = window.innerWidth - 50
+    canvas.height = window.innerHeight - 50
 
     const rect = 10
     const rows = Math.ceil(canvas.height / rect)
@@ -35,7 +35,14 @@
      * 一个小方块的坐标 x, y指其左上角的位置
     * */
     const snake = new Snake(rect)
+    let food = createFood()
 
+    // 绘制食物
+    function drawFood() {
+        ctx.fillStyle = food.color
+        ctx.fillRect(food.x, food.y, rect, rect)
+    }
+    // 渲染到画板
     function render() {
         ctx.save()
         const data = snake.data
@@ -43,11 +50,13 @@
             ctx.fillStyle = item.color
             ctx.fillRect(item.x, item.y, snake.rect, snake.rect)
         })
-        const food = createFood()
-        ctx.fillStyle = food.color
-        ctx.fillRect(food.x, food.y, rect, rect)
+        if(isEat(food)) {
+            food = createFood()
+        }
+        drawFood()
         ctx.restore()
     }
+    // 创建食物
     function createFood() {
         const food = new Food(rows, columns, rect)
         const isExist = snake.data.some(item => item.x === food.x && item.y === food.y)
@@ -57,9 +66,41 @@
             return food
         }
     }
-    render()
+    // 判断食物是否吃掉
+    function isEat(food) {
+        const { x, y } = snake.data[0]
+        if (food.x >= x && food.x <= x + rect && food.y >= y && food.y <= y + rect) {
+            return true
+        }
+        return false
+    }
+    window.onkeydown = function (e) {
+        switch (e.code) {
+            case 'ArrowLeft':
+                snake.changeDirection('left')
+                break
+            case 'ArrowRight':
+                snake.changeDirection('right')
+                break
+            case 'ArrowUp':
+                snake.changeDirection('top')
+                break
+            case 'ArrowDown':
+                snake.changeDirection('bottom')
+                break
+            case 'Space':
+                clearInterval(timer)
+                console.log('snake: ', snake.data[0].x, snake.data[0].y)
+                console.log('food: ', food.x, food.y)
+                break
+            default: console.log(e.code)
+        }
+    }
 
-    setInterval(() => {
+
+    render()
+    drawFood()
+    let timer = setInterval(() => {
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         snake.move()
         render()

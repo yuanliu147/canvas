@@ -47,7 +47,7 @@
     ball.y = 150
     ball.draw(ctx)
 
-    const v = 0.2
+    let v = 0.2
     let time = Date.now()
 
     let y = ball.y
@@ -65,9 +65,13 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
         ball.y += v * diff
+        v += 0.0001
         console.log('diff: ', ball.y - y)
         ball.draw(ctx)
         y = ball.y
+        if (ball.y > canvas.height) {
+            ball.y = 0
+        }
         requestAnimationFrame(render)
     })()
 </script>

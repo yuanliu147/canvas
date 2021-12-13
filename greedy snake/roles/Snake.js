@@ -25,16 +25,16 @@ class Snake {
         switch(this.direction){
             // 根据direction控制snake header下一步移动的位置
             case 'left':
-                this.data[0].x -= 1;
+                this.data[0].x -= this.rect;
                 break;
             case 'right':
-                this.data[0].x += 1;
+                this.data[0].x += this.rect;
                 break;
             case 'top':
-                this.data[0].y -= 1;
+                this.data[0].y -= this.rect;
                 break;
             case 'bottom':
-                this.data[0].y += 1;
+                this.data[0].y += this.rect;
                 break;
         }
     }
