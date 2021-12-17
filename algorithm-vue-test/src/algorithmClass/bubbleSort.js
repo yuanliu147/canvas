@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Ball from '../elemClass/ball'
-// import { Tween, update } from '@tweenjs/tween.js'
+import { Tween, update } from '@tweenjs/tween.js'
 
 class BubbleSort {
   static arrayToElems(arr) {
@@ -8,7 +8,8 @@ class BubbleSort {
       return new Ball(item, 150 + index * 20 + index * 30 * 2, 200, 30)
     })
   }
-  constructor(arr = []) {
+  constructor(ctx, arr = []) {
+    this.ctx = ctx
     this.elems = BubbleSort.arrayToElems(arr)
     this.initElems = _.cloneDeep(this.elems)
     this.drawQueue = [this.initElems] // 每次更新后的
@@ -29,14 +30,29 @@ class BubbleSort {
       let lastSwappedIndex = -1
       for (let j = 0; j < elems.length - 1; j++) {
         if (elems[j + 1].value < elems[j].value) {
+          this.render(_.cloneDeep(elems[j]), _.cloneDeep(elems[j + 1]))
           this.swapElem(j, j + 1) // 交换elems里面的数据
-          this.drawQueue.push(_.cloneDeep(elems))
+          // this.drawQueue.push(_.cloneDeep(elems))
           lastSwappedIndex = j + 1
         }
       }
       i += elems.length - lastSwappedIndex
     }
     // this.render()
+  }
+  render(elem1, elem2) {
+    const { elems, ctx } = this
+    const currElems = _.cloneDeep(elems)
+    new Tween(elem1).to({ x: elem2.x }, 300).start()
+    new Tween(elem2).to({ x: elem1.x }, 300).start()
+    ;(function animate() {
+      update()
+      ctx.clearRect(0, 0, window.innerWidth, window.innerHeight)
+      currElems.forEach((item) => {
+        item.draw(ctx)
+      })
+      requestAnimationFrame(animate)
+    })()
   }
   /*
   render() {
