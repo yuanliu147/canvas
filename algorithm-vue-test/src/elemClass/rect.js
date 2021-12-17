@@ -1,0 +1,3 @@
+class Rect {
+  constructor() {}
+}

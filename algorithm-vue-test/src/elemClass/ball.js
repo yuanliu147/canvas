@@ -1,7 +1,6 @@
 class Ball {
-  static count = 0
   static interval = 20
-  constructor(value, x, y , r = 30, color = '#409EFF') {
+  constructor(value, x, y, r = 30, color = '#409EFF') {
     if (typeof value !== 'number') {
       if (value) {
         throw new Error(`${value} is not a number`)
@@ -10,18 +9,10 @@ class Ball {
       }
     }
     this.value = value
+    this.x = x
     this.y = y
     this.r = r
     this.color = color
-    if (!x) {
-      this.x = 100 + Ball.count * r * 2 + Ball.interval * Ball.count
-      Ball.count++
-    } else {
-      this.x = x
-    }
-    if (!y) {
-      this.y = 100 + Ball.count * 10
-    }
   }
   draw(ctx) {
     const { value, x, y, r, color } = this
@@ -36,10 +27,6 @@ class Ball {
     ctx.strokeStyle = 'white'
     ctx.strokeText(value, x - text.width / 2, y)
     ctx.restore()
-  }
-  moveTo(x) {
-    // 暂时只处理x轴上的交换
-    this.x = x
   }
 }
 
